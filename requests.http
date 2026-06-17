@@ -1,0 +1,67 @@
+### Enroll student via Gateway
+POST http://localhost:8080/api/enrollments
+Content-Type: application/json
+
+{
+  "studentCnie": "AB1234",
+  "courseId": 1
+}
+
+### Get my enrollments via Gateway
+GET http://localhost:8080/api/enrollments/me?cnie=AB1234
+
+### Count enrollments for course 1 via Gateway
+GET http://localhost:8080/api/enrollments/course/1/count
+
+
+### Test double enrollment
+POST http://localhost:8080/api/enrollments
+Content-Type: application/json
+
+{
+  "studentCnie": "CD2387",
+  "courseId": 1
+}
+
+### Test student not found
+POST http://localhost:8080/api/enrollments
+Content-Type: application/json
+
+{
+  "studentCnie": "XXX999",
+  "courseId": 1
+}
+
+### Enroll second student
+POST http://localhost:8080/api/enrollments
+Content-Type: application/json
+
+{
+  "studentCnie": "AB1234",
+  "courseId": 1
+}
+
+### Enroll third student
+POST http://localhost:8080/api/enrollments
+Content-Type: application/json
+
+{
+  "studentCnie": "ZH9090",
+  "courseId": 1
+}
+### Test course capacity reached
+POST http://localhost:8080/api/enrollments
+Content-Type: application/json
+
+{
+  "studentCnie": "MA5555",
+  "courseId": 1
+}
+### Cancel enrollment
+DELETE http://localhost:8080/api/enrollments/1?cnie=CD2387
+
+### Get enrollments after cancellation
+GET http://localhost:8080/api/enrollments/me?cnie=CD2387
+
+### test 24h cancellation window
+DELETE http://localhost:8080/api/enrollments/2?cnie=AB1234

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="EnrollHub - Dashboard moderne de gestion des inscriptions universitaires." />
+    <title>EnrollHub | Student Enrollment Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<main id="app">
+    <section id="access-screen" class="access-screen" aria-labelledby="access-title">
+        <div class="orb orb-one" aria-hidden="true"></div>
+        <div class="orb orb-two" aria-hidden="true"></div>
+        <div class="orb orb-three" aria-hidden="true"></div>
+
+        <article class="access-card" role="region" aria-label="Accès étudiant EnrollHub">
+            <div class="brand-mark pulse-glow" aria-hidden="true">
+                <i data-lucide="graduation-cap"></i>
+            </div>
+            <p class="platform-badge">
+                <i data-lucide="sparkles"></i>
+                Microservices Student Platform
+            </p>
+            <h1 id="access-title" class="gradient-title">EnrollHub</h1>
+            <p class="access-subtitle">
+                Accédez à votre espace d’inscription universitaire, consultez vos cours et gérez vos inscriptions en temps réel.
+            </p>
+
+            <form id="cnie-form" class="access-form" autocomplete="off">
+                <label for="cnie-input">Votre CNIE</label>
+                <div class="input-shell">
+                    <i data-lucide="id-card"></i>
+                    <input
+                            id="cnie-input"
+                            name="cnie"
+                            type="text"
+                            placeholder="Exemple : CD2387"
+                            maxlength="30"
+                            aria-describedby="access-error cnie-hint"
+                            required
+                    />
+                </div>
+                <p id="cnie-hint" class="form-hint">Le CNIE sera vérifié via l’API Gateway.</p>
+                <button id="access-button" class="btn btn-primary submit-btn" type="submit" aria-label="Continuer vers le dashboard">
+                    <span>Continuer</span>
+                    <i data-lucide="arrow-right"></i>
+                </button>
+                <p id="access-error" class="access-error" role="alert" aria-live="polite"></p>
+            </form>
+        </article>
+    </section>
+
+    <section id="dashboard-screen" class="dashboard-screen hidden" aria-label="Dashboard EnrollHub">
+        <aside class="sidebar" aria-label="Navigation principale">
+            <div class="sidebar-brand">
+                <div class="brand-mark small" aria-hidden="true">
+                    <i data-lucide="graduation-cap"></i>
+                </div>
+                <div class="brand-copy">
+                    <strong>EnrollHub</strong>
+                    <span>Academic Gateway</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav" aria-label="Sections du dashboard">
+                <button class="nav-item active" type="button" data-target="overview-section" data-label="Overview" aria-label="Aller à Overview">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Overview</span>
+                </button>
+                <button class="nav-item" type="button" data-target="enrollments-section" data-label="Enrollments" aria-label="Aller à My Enrollments">
+                    <i data-lucide="clipboard-list"></i>
+                    <span>My Enrollments</span>
+                </button>
+                <button class="nav-item" type="button" data-target="catalog-section" data-label="Catalog" aria-label="Aller au Course Catalog">
+                    <i data-lucide="book-open-check"></i>
+                    <span>Course Catalog</span>
+                </button>
+                <button class="nav-item" type="button" data-target="analytics-section" data-label="Analytics" aria-label="Aller aux Analytics">
+                    <i data-lucide="chart-no-axes-combined"></i>
+                    <span>Analytics</span>
+                </button>
+            </nav>
+
+            <footer class="sidebar-footer">
+                <span>API Gateway</span>
+                <strong>localhost:8080</strong>
+                <small>REST • JSON • WebClient</small>
+            </footer>
+        </aside>
+
+        <div class="dashboard-main">
+            <header class="topbar">
+                <div class="topbar-greeting">
+                    <p>Bienvenue sur EnrollHub</p>
+                    <h2 id="topbar-name">Chargement du profil...</h2>
+                </div>
+                <div class="topbar-actions">
+                    <button id="refresh-button" class="icon-btn" type="button" aria-label="Actualiser les données du dashboard">
+                        <i data-lucide="refresh-cw"></i>
+                    </button>
+                    <div class="student-chip" aria-label="Étudiant connecté">
+                        <div id="avatar" class="avatar">--</div>
+                        <div>
+                            <strong id="chip-name">Student</strong>
+                            <span id="chip-cnie">CNIE</span>
+                        </div>
+                    </div>
+                    <button id="logout-button" class="btn btn-ghost" type="button" aria-label="Se déconnecter">
+                        <i data-lucide="log-out"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </header>
+
+            <div id="global-alert" class="global-alert hidden" role="status" aria-live="polite"></div>
+
+            <section id="overview-section" class="dashboard-section" aria-labelledby="overview-title">
+                <div class="hero-panel card">
+                    <div class="hero-content">
+                        <p class="section-kicker">Student enrollment command center</p>
+                        <h1 id="overview-title" class="gradient-title">Pilotez vos inscriptions avec clarté.</h1>
+                        <p>
+                            Toutes les données sont chargées depuis les microservices Student, Course et Enrollment via l’API Gateway.
+                        </p>
+                        <div class="hero-meta">
+                            <span><i data-lucide="shield-check"></i> JSON DTO ready</span>
+                            <span><i data-lucide="clock-3"></i> Annulation limitée à 24h</span>
+                        </div>
+                    </div>
+
+                    <div class="radial-widget" aria-label="Occupation globale des cours">
+                        <svg viewBox="0 0 140 140" role="img" aria-labelledby="radial-title radial-desc">
+                            <title id="radial-title">Occupation globale</title>
+                            <desc id="radial-desc">Pourcentage d’occupation calculé depuis les inscriptions par cours.</desc>
+                            <circle class="radial-track" cx="70" cy="70" r="54"></circle>
+                            <circle id="hero-progress-circle" class="radial-progress" cx="70" cy="70" r="54"></circle>
+                        </svg>
+                        <div class="radial-copy">
+                            <strong id="occupancy-value">0%</strong>
+                            <span>Occupancy</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="profile-card" class="profile-card card"></div>
+                <div id="stats-grid" class="stats-grid"></div>
+            </section>
+
+            <section id="enrollments-section" class="dashboard-section" aria-labelledby="enrollments-title">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-kicker">Current student journey</p>
+                        <h2 id="enrollments-title">My Enrollments</h2>
+                    </div>
+                    <span id="last-updated" class="last-updated">Non synchronisé</span>
+                </div>
+                <div id="enrollments-container" class="enrollments-container card"></div>
+            </section>
+
+            <section id="catalog-section" class="dashboard-section" aria-labelledby="catalog-title">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-kicker">Academic catalog</p>
+                        <h2 id="catalog-title">Course Catalog</h2>
+                    </div>
+                    <p class="section-note">Capacité maximale : 3 étudiants par cours.</p>
+                </div>
+                <div id="courses-grid" class="courses-grid"></div>
+            </section>
+
+            <section id="analytics-section" class="dashboard-section" aria-labelledby="analytics-title">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-kicker">Visual analytics</p>
+                        <h2 id="analytics-title">Enrollment Analytics</h2>
+                    </div>
+                    <p class="section-note">Graphiques générés côté client avec Chart.js.</p>
+                </div>
+                <div class="charts-grid">
+                    <article class="chart-card card wide">
+                        <div class="chart-heading">
+                            <h3>Enrollment Activity</h3>
+                            <span>7 derniers jours</span>
+                        </div>
+                        <canvas id="line-chart" aria-label="Courbe des inscriptions récentes"></canvas>
+                    </article>
+                    <article class="chart-card card">
+                        <div class="chart-heading">
+                            <h3>Capacity Split</h3>
+                            <span>Inscriptions vs places</span>
+                        </div>
+                        <canvas id="doughnut-chart" aria-label="Répartition de la capacité"></canvas>
+                    </article>
+                    <article class="chart-card card">
+                        <div class="chart-heading">
+                            <h3>Course Occupancy</h3>
+                            <span>Par cours</span>
+                        </div>
+                        <canvas id="bar-chart" aria-label="Barres d’occupation par cours"></canvas>
+                    </article>
+                    <article class="chart-card card wide">
+                        <div class="chart-heading">
+                            <h3>Catalog Health</h3>
+                            <span>Disponible • Presque complet • Complet</span>
+                        </div>
+                        <canvas id="radar-chart" aria-label="Santé du catalogue des cours"></canvas>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </section>
+</main>
+
+<div id="modal-backdrop" class="modal-backdrop hidden" aria-hidden="true">
+    <article class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-message">
+        <div class="modal-icon" aria-hidden="true">
+            <i data-lucide="triangle-alert"></i>
+        </div>
+        <h2 id="modal-title">Confirmer l’annulation</h2>
+        <p id="modal-message">Voulez-vous vraiment annuler cette inscription ?</p>
+        <div class="modal-actions">
+            <button id="modal-cancel" class="btn btn-ghost" type="button">Keep Enrollment</button>
+            <button id="modal-confirm" class="btn btn-danger" type="button">Cancel Enrollment</button>
+        </div>
+    </article>
+</div>
+
+<div id="toast-container" class="toast-container" aria-live="polite" aria-label="Notifications"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
